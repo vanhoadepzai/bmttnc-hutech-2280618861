@@ -1,11 +1,13 @@
 from cipher.vingenere import VigenereCipher
-from cipher.playfair import PlayFairCipher
-from cipher.transposition import TranspositionCipher
 from cipher.railfence import RailFenceCipher
 from flask import Flask, request, jsonify
 from cipher.caesar import CaesarCipher 
-
+from cipher.playfair import PlayFairCipher
+from cipher.transposition import TranspositionCipher
 app = Flask(__name__)
+@app.route('/')
+def home():
+    return "Flask API đang chạy thành công tại cổng 5050!"
 
 #CAESAR CIPHER ALGORITM
 
@@ -14,7 +16,7 @@ caesar_cipher = CaesarCipher()
 @app.route('/api/caesar/encrypt', methods=['POST'])
 def caesar_encrypt():
     data = request.get_json()
-    cipher_text = data['cipher_text']
+    cipher_text = data['Plain_text']
     key = int(data['key'])
     encrypted_text = caesar_cipher.encrypt(cipher_text, key)
     return jsonify({'encrypted_message': encrypted_text})
@@ -46,7 +48,7 @@ def vigenere_decrypt():
     decrypted_text = vigenere_cipher.vigenere_decrypt(cipher_text, key)
     return jsonify({"decrypted_text": decrypted_text})
 
-#RAILFENCE CIPHER ALGORITHM
+#RAILFENCE
 railfence_cipher = RailFenceCipher()
 
 @app.route('/api/railfence/encrypt', methods=['POST'])
@@ -64,8 +66,7 @@ def decrypt():
     key = int(data['key'])
     decrypted_text = railfence_cipher.decrypt(cipher_text, key)
     return jsonify({'decrypted_text': decrypted_text})
-
-# PLAYFAIR CIPHER ALGORITHM
+# PLAYFAIR 
 playfair_cipher = PlayFairCipher()
 
 @app.route('/api/playfair/creatematrix', methods=['POST'])
@@ -93,7 +94,7 @@ def playfair_decrypt():
     decrypted_text = playfair_cipher.playfair_decrypt(cipher_text, playfair_matrix)
     return jsonify({"decrypted_text": decrypted_text})
 
-# TRANSPOSITION CIPHER ALGORITHM
+# TRANSPOSITION 
 transposition_cipher = TranspositionCipher()
 
 @app.route('/api/cl', methods=['POST'])
@@ -111,7 +112,6 @@ def transposition_decrypt():
     key = int(data.get('key'))
     decrypted_text = transposition_cipher.decrypt(cipher_text, key)
     return jsonify({'decrypted_text': decrypted_text})
-
 #main function
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5050, debug=True)
