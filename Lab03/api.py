@@ -90,6 +90,35 @@ def ecc_verify_signature():
     signature = bytes.fromhex(signature_hex)
     is_verified = ecc_cipher.verify(message, signature, public_key)
     return jsonify({'is_verified': is_verified})
+# === CAESAR CIPHER (BỔ SUNG) ===
+def caesar_encrypt(text, key):
+    result = ''
+    for char in text:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            result += chr((ord(char) - base + int(key)) % 26 + base)
+        else:
+            result += char
+    return result
+
+def caesar_decrypt(text, key):
+    return caesar_encrypt(text, -int(key))
+
+@app.route('/api/caesar/encrypt', methods=['POST'])
+def caesar_encrypt_api():
+    data = request.get_json()
+    plain_text = data.get('plain_text', '')
+    key = data.get('key', '0')
+    encrypted = caesar_encrypt(plain_text, key)
+    return jsonify({'encrypted_message': encrypted})
+
+@app.route('/api/caesar/decrypt', methods=['POST'])
+def caesar_decrypt_api():
+    data = request.get_json()
+    cipher_text = data.get('cipher_text', '')
+    key = data.get('key', '0')
+    decrypted = caesar_decrypt(cipher_text, key)
+    return jsonify({'decrypted_message': decrypted})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
